@@ -2,8 +2,7 @@ package com.ungs.tp.views;
 
 import javax.servlet.annotation.WebServlet;
 
-import org.hibernate.services.PostService;
-
+import com.ungs.tp.services.PostService;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
@@ -31,6 +30,8 @@ public class InitUI extends UI {
 	protected void init(VaadinRequest request) {
 		navigator = new Navigator(this, this);
 		navigator.addView("", new LoginView());
+		navigator.addView(RegistracionView.NAME, new RegistracionView());
+		navigator.addView(MainView.NAME, new MainView());
         navigator.addView(MAINVIEW, new PruebaView());
 
 	}

@@ -8,7 +8,7 @@ import com.vaadin.ui.VerticalLayout;
 public class MainView implements View {
 
 	private static final long serialVersionUID = 3959492020089277977L;
-	
+	public static final String NAME = "main";
 	VerticalLayout menuTree = new VerticalLayout();
 	HorizontalLayout titulo = new HorizontalLayout();
 	

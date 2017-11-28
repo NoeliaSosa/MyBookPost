@@ -13,6 +13,8 @@ public class PruebaView extends VerticalLayout implements View, ClickListener {
 
 	Button click = new Button("Hola",new Button.ClickListener() {
 
+		private static final long serialVersionUID = 4637271395455601867L;
+
 		@Override
 		 public void buttonClick(ClickEvent event) {
 		 getUI().getNavigator().navigateTo("");

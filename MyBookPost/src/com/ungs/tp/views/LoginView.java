@@ -1,12 +1,9 @@
 package com.ungs.tp.views;
 
-import org.hibernate.services.UsuarioService;
-
-import com.ungs.tp.viewsJoaco.SecurePage;
+import com.ungs.tp.services.UsuarioService;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.Page;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -50,8 +47,7 @@ public class LoginView extends VerticalLayout implements View   {
 			public void buttonClick(ClickEvent event) {
 				if(service.verificarContraseña(username.getValue(), password.getValue())){
 					VaadinSession.getCurrent().setAttribute("user", username.getValue());
-					getUI().getNavigator().addView(SecurePage.NAME, SecurePage.class);
-					Page.getCurrent().setUriFragment("!"+SecurePage.NAME);
+					
 				}else{
 					Notification.show("Invalid credentials", Notification.Type.ERROR_MESSAGE);
 				}
@@ -66,7 +62,6 @@ public class LoginView extends VerticalLayout implements View   {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				getUI().getNavigator().addView(RegistracionView.NAME, RegistracionView.class);
 				getUI().getNavigator().navigateTo(RegistracionView.NAME);
 			}
 			

@@ -1,7 +1,6 @@
 package com.ungs.tp.viewsJoaco;
 
-import org.hibernate.services.UsuarioService;
-
+import com.ungs.tp.services.UsuarioService;
 import com.ungs.tp.views.RegistracionView;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;

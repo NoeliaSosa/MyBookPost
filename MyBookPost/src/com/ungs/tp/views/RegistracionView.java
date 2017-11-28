@@ -1,20 +1,18 @@
 package com.ungs.tp.views;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
-import org.hibernate.beans.Post;
-import org.hibernate.beans.Usuario;
-import org.hibernate.services.UsuarioService;
-
-import com.ungs.tp.viewsJoaco.LoginPage;
+import com.ungs.tp.beans.Post;
+import com.ungs.tp.beans.Usuario;
+import com.ungs.tp.services.UsuarioService;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
@@ -23,15 +21,13 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 
 public class RegistracionView extends VerticalLayout implements View {
 	private static final long serialVersionUID = 1L;
 	public static final String NAME = "registration";
 	UsuarioService service = new UsuarioService();
 
-	@SuppressWarnings({ "unused", "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	public RegistracionView() {
 
 		Panel panel = new Panel("Registrar");
@@ -90,20 +86,19 @@ public class RegistracionView extends VerticalLayout implements View {
 							password.getValue());
 					nuevoUser.agregarPost(p);
 					service.crearUsuario(nuevoUser);
+					getUI().getNavigator().navigateTo("");
 				}
-
 			}
 
 		});
 
-		Button cancel = new Button("Cancel");
+		Button cancel = new Button("Cancelar");
 		cancel.addClickListener(new ClickListener() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				getUI().getNavigator().addView(LoginPage.NAME, LoginPage.class);
-				getUI().getNavigator().navigateTo(LoginPage.NAME);
+				getUI().getNavigator().navigateTo("");
 			}
 
 		});
