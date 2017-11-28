@@ -10,7 +10,6 @@ import com.ungs.tp.services.UsuarioService;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.shared.ui.AlignmentInfo.Bits;
 import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -25,7 +24,6 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-
 
 public class RegistracionView extends VerticalLayout implements View {
 	private static final long serialVersionUID = 1L;
@@ -52,7 +50,6 @@ public class RegistracionView extends VerticalLayout implements View {
 		List<String> data = Arrays.asList("CUIL", "CUIT");
 		RadioButtonGroup tipoDoc = new RadioButtonGroup<>("", data);
 		content.addComponent(tipoDoc);
-
 
 		TextField cuilCuit = new TextField("Número de CUIL/CUIT");
 		cuilCuit.setIcon(VaadinIcons.TEXT_INPUT);
@@ -89,12 +86,10 @@ public class RegistracionView extends VerticalLayout implements View {
 					nuevoUser.agregarPost(p);
 					service.crearUsuario(nuevoUser);
 					Notification.show("Su usuario se genero con éxito!!");
-					clear(content.iterator());
+					clean(content.iterator());
 					getUI().getNavigator().navigateTo("");
 				}
 			}
-
-
 
 		});
 
@@ -104,7 +99,7 @@ public class RegistracionView extends VerticalLayout implements View {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				clear(content.iterator());
+				clean(content.iterator());
 				getUI().getNavigator().navigateTo("");
 			}
 
@@ -121,17 +116,26 @@ public class RegistracionView extends VerticalLayout implements View {
 		setComponentAlignment(panel, Alignment.MIDDLE_CENTER);
 
 	}
-	private void clear(Iterator<Component> iterator) {
-		if(iterator.hasNext()){
-			((AbstractTextField) iterator.next()).setValue("");
+
+	private void clean(Iterator<Component> iterator) {
+		while(iterator.hasNext()){
+			if (iterator.hasNext()) {
+				Object sig = iterator.next();
+				if(sig instanceof RadioButtonGroup){
+					continue;
+				}if(sig instanceof HorizontalLayout){
+					continue;
+				}
+				else{
+					((AbstractTextField) sig).setValue("");
+				}
+			}	
 		}
-		
 	}
 
 	private boolean validaDatos(String nombre, String apellido,
 			String cuilCuit, String tipo, String email, String user, String pass) {
 		String str = "";
-		Boolean ret = true;
 		if (nombre.isEmpty()) {
 			str.concat(" nombre");
 		} else if (apellido.isEmpty()) {
@@ -147,13 +151,26 @@ public class RegistracionView extends VerticalLayout implements View {
 		} else if (pass.isEmpty()) {
 			str.concat(" contraseña");
 		} else {
-			return validarCuitCuil(cuilCuit) && validarContraseña(pass);
+			if (validarCuitCuil(cuilCuit)) {
+				if (validarContraseña(pass)) {
+					if (validarMail(email)) {
+						return true;
+					} else {
+						str.concat(" email Correcto!!");
+					}
+				} else {
+					str.concat(" una contraseña Correcta!!");
+				}
+
+			} else {
+				return false;
+			}
 		}
 		if (!str.equals("")) {
 			Notification.show("Debe ingresar " + str + "!!");
-			ret = false;
+			return false;
 		}
-		return ret;
+		return true;
 	}
 
 	private boolean validarContraseña(String pass) {
@@ -161,16 +178,21 @@ public class RegistracionView extends VerticalLayout implements View {
 		return pass.matches(reg);
 	}
 
+	private boolean validarMail(String mail) {
+		String reg = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+		return mail.matches(reg);
+	}
+
 	private boolean validarCuitCuil(String cuilCuit) {
 		// Eliminamos todos los caracteres que no son números
 		cuilCuit = cuilCuit.replaceAll("[^\\d]", "");
 		// Controlamos si son 11 números los que quedaron, si no es el caso, ya
 		// devuelve falso
-		if (cuilCuit.length() < 11) {
-			Notification.show("Debe ingresar un número de CUIL/CUIT correcto");
+		if (cuilCuit.length()< 11) {
+			Notification.show("Debe ingresar un número de CUIL/CUIT válido!!");
 			return false;
 		}
-
 		String[] cuitArray = cuilCuit.split("");
 		Integer aux = 0;
 		Integer[] serie = { 5, 4, 3, 2, 7, 6, 5, 4, 3, 2 };
@@ -179,13 +201,17 @@ public class RegistracionView extends VerticalLayout implements View {
 		}
 		aux = 11 - (aux % 11);
 		if (aux != Integer.valueOf(cuitArray[10])) {
-			Notification.show("Debe ingresar un número de CUIL/CUIT correcto");
+			Notification.show("Debe ingresar un número de CUIL/CUIT válido!!");
 			return false;
 		}
-
+		if(!service.verificarDuplicados(cuilCuit)){
+			Notification.show("El CUIL/CUIT ya se encuentra registrado!!");
+			return false;
+		}
 		return true;
 
 	}
+
 
 	@Override
 	public void enter(ViewChangeEvent event) {

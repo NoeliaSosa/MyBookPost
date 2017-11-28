@@ -17,8 +17,8 @@ public class PostDaoImpl extends DaoImpl<Post> implements PostDao {
 	@SuppressWarnings("unchecked")
 	public List<Post> obtenerPostsByUsuario(Usuario usuario){
 		EntityManager entityManager = EntityManagers.createEntityManager();
-		Query query= entityManager.createQuery("select p from Post p WHERE p.USER.ID = :userId");
-		query.setParameter("userId", usuario.getId()); 
+		Query query= entityManager.createQuery("select p from Post p WHERE p.user_id = :userId");
+		query.setParameter("userId", usuario.getId());
 		List<Post> ret = (List<Post>)query.getResultList();
 		return ret;
 	}
