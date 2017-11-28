@@ -47,7 +47,7 @@ public class LoginView extends VerticalLayout implements View   {
 			public void buttonClick(ClickEvent event) {
 				if(service.verificarContraseña(username.getValue(), password.getValue())){
 					VaadinSession.getCurrent().setAttribute("user", username.getValue());
-					
+					getUI().getNavigator().navigateTo(MainView.NAME);
 				}else{
 					Notification.show("Invalid credentials", Notification.Type.ERROR_MESSAGE);
 				}

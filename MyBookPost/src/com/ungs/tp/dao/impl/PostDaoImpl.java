@@ -3,6 +3,7 @@ package com.ungs.tp.dao.impl;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import com.ungs.tp.beans.Post;
 import com.ungs.tp.beans.Usuario;
@@ -16,7 +17,9 @@ public class PostDaoImpl extends DaoImpl<Post> implements PostDao {
 	@SuppressWarnings("unchecked")
 	public List<Post> obtenerPostsByUsuario(Usuario usuario){
 		EntityManager entityManager = EntityManagers.createEntityManager();
-		List<Post> ret = (List<Post>) entityManager.createQuery("SELECT * FROM POST p WHERE p.USER.ID = "+usuario.getId());
+		Query query= entityManager.createQuery("select p from Post p WHERE p.USER.ID = :userId");
+		query.setParameter("userId", usuario.getId()); 
+		List<Post> ret = (List<Post>)query.getResultList();
 		return ret;
 	}
 

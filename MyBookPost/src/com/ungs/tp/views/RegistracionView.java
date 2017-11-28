@@ -48,7 +48,6 @@ public class RegistracionView extends VerticalLayout implements View {
 
 		List<String> data = Arrays.asList("CUIL", "CUIT");
 		RadioButtonGroup tipoDoc = new RadioButtonGroup<>("", data);
-
 		cuitCuilLabel.addComponent(tipoDoc);
 
 		TextField cuilCuit = new TextField("");
