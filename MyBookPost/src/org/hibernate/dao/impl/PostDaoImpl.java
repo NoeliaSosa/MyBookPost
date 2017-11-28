@@ -1,41 +1,23 @@
 package org.hibernate.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 import org.hibernate.beans.Post;
+import org.hibernate.beans.Usuario;
+import org.hibernate.dao.EntityManagers;
 import org.hibernate.dao.PostDao;
 
-public class PostDaoImpl implements PostDao {
 
-	private static EntityManagerFactory entityManagerFactory;
+public class PostDaoImpl extends DaoImpl<Post> implements PostDao {
 
-	public void init() {
-		entityManagerFactory = Persistence
-				.createEntityManagerFactory("org.hibernate.tp.jpa");
-	}
-
-	public  void tearDown() throws Exception {
-		entityManagerFactory.close();
-	}
-
-	public void nuevo(Post post) throws Exception {
-		EntityManager entityManager = entityManagerFactory
-				.createEntityManager();
-		entityManager.getTransaction().begin();
-		entityManager.persist(post);
-		entityManager.getTransaction().commit();
-		entityManager.close();
-		tearDown();
-	}
-
-	public void update(Post post) {
-
-	}
-
-	public void delete(Post post) {
-
+	
+	@SuppressWarnings("unchecked")
+	public List<Post> obtenerPostsByUsuario(Usuario usuario){
+		EntityManager entityManager = EntityManagers.createEntityManager();
+		List<Post> ret = (List<Post>) entityManager.createQuery("SELECT * FROM POST p WHERE p.USER.ID = "+usuario.getId());
+		return ret;
 	}
 
 }

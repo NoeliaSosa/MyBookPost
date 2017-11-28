@@ -1,12 +1,12 @@
 package org.hibernate.dao;
 
+import java.util.List;
+
 import org.hibernate.beans.Post;
+import org.hibernate.beans.Usuario;
 
-public interface PostDao   {
 
-	public abstract void nuevo(Post post) throws Exception;
+public interface PostDao extends DAO<Post>  {
 
-	public abstract void update(Post post);
-
-	public abstract void delete(Post post);
+	public List<Post> obtenerPostsByUsuario(Usuario usuario);
 }
