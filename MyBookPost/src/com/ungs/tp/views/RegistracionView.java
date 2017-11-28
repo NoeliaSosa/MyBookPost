@@ -1,6 +1,7 @@
 package com.ungs.tp.views;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import com.ungs.tp.beans.Post;
@@ -9,10 +10,13 @@ import com.ungs.tp.services.UsuarioService;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.shared.ui.AlignmentInfo.Bits;
+import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
@@ -21,6 +25,7 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+
 
 public class RegistracionView extends VerticalLayout implements View {
 	private static final long serialVersionUID = 1L;
@@ -37,23 +42,21 @@ public class RegistracionView extends VerticalLayout implements View {
 		FormLayout content = new FormLayout();
 
 		TextField nombre = new TextField("Nombre");
-		nombre.setIcon(VaadinIcons.USER);
+		nombre.setIcon(VaadinIcons.NURSE);
 		content.addComponent(nombre);
 
 		TextField apellido = new TextField("Apellido");
-		apellido.setIcon(VaadinIcons.USER);
+		apellido.setIcon(VaadinIcons.NURSE);
 		content.addComponent(apellido);
-
-		HorizontalLayout cuitCuilLabel = new HorizontalLayout();
 
 		List<String> data = Arrays.asList("CUIL", "CUIT");
 		RadioButtonGroup tipoDoc = new RadioButtonGroup<>("", data);
-		cuitCuilLabel.addComponent(tipoDoc);
+		content.addComponent(tipoDoc);
 
-		TextField cuilCuit = new TextField("");
-		cuitCuilLabel.addComponent(cuilCuit);
 
-		content.addComponent(cuitCuilLabel);
+		TextField cuilCuit = new TextField("Número de CUIL/CUIT");
+		cuilCuit.setIcon(VaadinIcons.TEXT_INPUT);
+		content.addComponent(cuilCuit);
 
 		TextField email = new TextField("Email");
 		email.setIcon(VaadinIcons.MAILBOX);
@@ -85,9 +88,13 @@ public class RegistracionView extends VerticalLayout implements View {
 							password.getValue());
 					nuevoUser.agregarPost(p);
 					service.crearUsuario(nuevoUser);
+					Notification.show("Su usuario se genero con éxito!!");
+					clear(content.iterator());
 					getUI().getNavigator().navigateTo("");
 				}
 			}
+
+
 
 		});
 
@@ -97,6 +104,7 @@ public class RegistracionView extends VerticalLayout implements View {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+				clear(content.iterator());
 				getUI().getNavigator().navigateTo("");
 			}
 
@@ -112,6 +120,12 @@ public class RegistracionView extends VerticalLayout implements View {
 		panel.setContent(content);
 		setComponentAlignment(panel, Alignment.MIDDLE_CENTER);
 
+	}
+	private void clear(Iterator<Component> iterator) {
+		if(iterator.hasNext()){
+			((AbstractTextField) iterator.next()).setValue("");
+		}
+		
 	}
 
 	private boolean validaDatos(String nombre, String apellido,
@@ -133,8 +147,7 @@ public class RegistracionView extends VerticalLayout implements View {
 		} else if (pass.isEmpty()) {
 			str.concat(" contraseña");
 		} else {
-			return validarCuitCuil(cuilCuit)&&
-			 validarContraseña(pass);
+			return validarCuitCuil(cuilCuit) && validarContraseña(pass);
 		}
 		if (!str.equals("")) {
 			Notification.show("Debe ingresar " + str + "!!");
@@ -149,12 +162,28 @@ public class RegistracionView extends VerticalLayout implements View {
 	}
 
 	private boolean validarCuitCuil(String cuilCuit) {
-		boolean ret = true;
-		if (cuilCuit.length() != 11) {
+		// Eliminamos todos los caracteres que no son números
+		cuilCuit = cuilCuit.replaceAll("[^\\d]", "");
+		// Controlamos si son 11 números los que quedaron, si no es el caso, ya
+		// devuelve falso
+		if (cuilCuit.length() < 11) {
 			Notification.show("Debe ingresar un número de CUIL/CUIT correcto");
-			ret=false;
+			return false;
 		}
-		return ret;
+
+		String[] cuitArray = cuilCuit.split("");
+		Integer aux = 0;
+		Integer[] serie = { 5, 4, 3, 2, 7, 6, 5, 4, 3, 2 };
+		for (int i = 0; i < 10; i++) {
+			aux += Integer.valueOf(cuitArray[i]) * serie[i];
+		}
+		aux = 11 - (aux % 11);
+		if (aux != Integer.valueOf(cuitArray[10])) {
+			Notification.show("Debe ingresar un número de CUIL/CUIT correcto");
+			return false;
+		}
+
+		return true;
 
 	}
 
